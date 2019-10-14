@@ -13,7 +13,7 @@ warnings.filterwarnings("ignore")
 # giving the file path and the required features
 data_csv_path = "Sample Transactions with Target Variable.csv"
 features = ["PROCESSING_CODE", "POS_DATA", "TRANSACTION_AMOUNT", "POS_ENTRY_MODE", "CARD_ACCEPTOR_ACTIVITY",
-            "CODE_ACTION"]
+            "CODE_ACTION", "TARGET"]
 features.sort()
 print(features)
 length = len(features)
@@ -68,16 +68,20 @@ data_with_req_features[features[index]] = data_with_req_features[features[index]
 
 # assigning appropriate types for all the columns
 
-convert_dict = {'POS_ENTRY_MODE': str,
+data_with_req_features['TARGET'].fillna('0', inplace=True)
+data_with_req_features['TARGET'] = data_with_req_features['TARGET'].replace('Doubtful', '1')
+data_with_req_features['TARGET'] = data_with_req_features['TARGET'].replace('Fraud', '2')
+
+convert_dict = {'POS_ENTRY_MODE': 'category',
                 'POS_DATA': str,
-                'PROCESSING_CODE': str,
+                'PROCESSING_CODE': 'category',
                 'TRANSACTION_AMOUNT': float,
-                'CARD_ACCEPTOR_ACTIVITY': str,
-                'CODE_ACTION': str
+                'CARD_ACCEPTOR_ACTIVITY': 'category',
+                'CODE_ACTION': 'category',
+                'TARGET': 'category'
                 }
 
 dataframe = data_with_req_features.astype(convert_dict)
-print(dataframe.dtypes)
 
 index = list(dataframe).index('POS_DATA')
 
@@ -95,18 +99,59 @@ dataframe['TRACK_REWRITE_CAP'] = dataframe['POS_DATA'].str[9:10]
 dataframe['TERM_OUTPUT_IND'] = dataframe['POS_DATA'].str[10:11]
 dataframe['PIN_ENTRY_IND'] = dataframe['POS_DATA'].str[11:12]
 
+dataframe['TERM_CH_VERI_CAP'] = dataframe['TERM_CH_VERI_CAP'].replace('S', '9')
+dataframe['PIN_ENTRY_IND'] = dataframe['TERM_CH_VERI_CAP'].replace('P', '6')
+dataframe['TERM_CARD_CAPTURE_CAP'] = dataframe['TERM_CARD_CAPTURE_CAP'].replace('S', '2')
+dataframe['TXN_CARD_READ_IND'] = dataframe['TXN_CARD_READ_IND'].replace('A', '0')
+dataframe['TXN_CH_VERI_IND'] = dataframe['TXN_CH_VERI_IND'].replace('S', '9')
+
+convert_dict = {'TERM_CARD_READ_CAP': 'category',
+                'TERM_CH_VERI_CAP': 'category',
+                'TERM_CARD_CAPTURE_CAP': 'category',
+                'TERM_ATTEND_CAP': 'category',
+                'CH_PRESENCE_IND': 'category',
+                'CARD_PRESENCE_IND': 'category',
+                'TXN_CARD_READ_IND': 'category',
+                'TXN_CH_VERI_IND': 'category',
+                'TXN_CARD_VERI_IND': 'category',
+                'TRACK_REWRITE_CAP': 'category',
+                'TERM_OUTPUT_IND': 'category',
+                'PIN_ENTRY_IND': 'category'
+                }
+
+dataframe = dataframe.astype(convert_dict)
+print(dataframe['POS_ENTRY_MODE'])
+print(dataframe['PROCESSING_CODE'])
+print(dataframe['TRANSACTION_AMOUNT'])
+print(dataframe['CARD_ACCEPTOR_ACTIVITY'])
+print(dataframe['CODE_ACTION'])
+print(dataframe['TARGET'])
+print(dataframe['TERM_CARD_READ_CAP'])
+print(dataframe['TERM_CH_VERI_CAP'])
+print(dataframe['TERM_CARD_CAPTURE_CAP'])
+print(dataframe['TERM_ATTEND_CAP'])
+print(dataframe['CH_PRESENCE_IND'])
+print(dataframe['CARD_PRESENCE_IND'])
+print(dataframe['TXN_CARD_READ_IND'])
+print(dataframe['TXN_CH_VERI_IND'])
+print(dataframe['TXN_CARD_VERI_IND'])
+print(dataframe['TRACK_REWRITE_CAP'])
+print(dataframe['TERM_OUTPUT_IND'])
+print(dataframe['PIN_ENTRY_IND'])
+
 # deleting the POS_DATA column after splitting
 dataframe.drop(columns=['POS_DATA'], inplace=True)
-
-dataframe.to_csv('task.csv')
+# having_S = dataframe['TRANSACTION_AMOUNT'].astype(str).str.contains('S')
+# dataframe = dataframe[~having_S]
+# dataframe.to_csv('task.csv')
 
 # print(new[0])
 # print(new)
-# print(dataframe.iloc[70445])
+print(dataframe.iloc[20])
 print(dataframe.dtypes)
 # = dataframe[feature[index]]
 # print(a)
-
+print(dataframe['TERM_CARD_READ_CAP'].describe())
 # removing indexes
 # dataframe.reset_index()
 
@@ -114,8 +159,8 @@ print(dataframe.dtypes)
 # dataframe.drop(columns=['POS_DATA'], inplace=True)
 
 # selecting X and y for the training data, X is the inputs and y is the response variable
-X = dataframe.iloc[:, [0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]]
-y = dataframe.iloc[:, 1]
+X = dataframe.iloc[:, [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
+y = dataframe.iloc[:, 4]
 print(X)
 print(y)
 
@@ -124,6 +169,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, accuracy_score
 from sklearn.metrics import classification_report
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier
+
 #
 # # from sklearn.model_selection import  GridSearchCV
 # # parameters={'n_neighbours':np.array([1,3,5,7,9])}
@@ -136,14 +184,24 @@ from sklearn.neighbors import KNeighborsClassifier
 # # print(cv.best_estimator_)
 #
 # splitting the training and testing data
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2019,stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=2019)
 
 # applying KNN classification algorithm (as our response variable is response code, categorical data) with nearest
 # neighbours = 3
 try:
-    knn = KNeighborsClassifier(n_neighbors=5)
+    warnings.filterwarnings("ignore")
+    from datetime import datetime
+    print('knn')
+    start = datetime.now()
+    knn = KNeighborsClassifier(n_neighbors=3)
     knn.fit(X_train, y_train)
     y_pred = knn.predict(X_test)
+
+    end = datetime.now()
+    time_taken = end - start
+    print('Time: ', time_taken)
+    #from sklearn.externals import joblib
+    #joblib.dump(knn,'knnModel.pkl')
     # print confusion matrix and classification report
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
@@ -152,10 +210,105 @@ try:
     print(accuracy_score(y_test, y_pred))
 
 except ValueError as e:
-  print(e)
+    print(e)
+
+try:
+    print('Decision Tree')
+    start = datetime.now()
+    clf=DecisionTreeClassifier(max_depth=5,random_state=2019,min_samples_split=10,min_samples_leaf=5)
+    clf.fit(X_train,y_train)
+    y_pred=clf.predict(X_test)
+    end = datetime.now()
+    time_taken = end - start
+    print('Time: ', time_taken)
+
+    import sklearn.datasets as datasets
+    import pandas as pd
+
+    iris = datasets.load_iris()
+    df = pd.DataFrame(iris.data, columns=iris.feature_names)
+    y = iris.target
+    # clf=clf.fit(df,y)
+    from sklearn.externals.six import StringIO
+    from IPython.display import Image
+    from sklearn.tree import export_graphviz
+    import pydotplus
+    dot_data = StringIO()
+    export_graphviz(clf, out_file=dot_data,
+                    filled=True, rounded=True,
+                    special_characters=True)
+    graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
+    Image(graph.create_png())
+
+    from sklearn.externals.six import StringIO
+    import pydot
+    from sklearn import tree
+    dot_data = StringIO()
+    tree.export_graphviz(clf, out_file=dot_data)
+    graph = pydot.graph_from_dot_data(dot_data.getvalue())
+    graph[0].write_pdf("iris.pdf")
+
+
+    print(confusion_matrix(y_test,y_pred))
+    print(classification_report(y_test,y_pred))
+    print(accuracy_score(y_test,y_pred))
+except ValueError as e:
+    print(e)
+
+try:
+    print('Random Forest')
+    start=datetime.now()
+    model_rf=RandomForestClassifier(random_state=2019,n_estimators=500,oob_score=True)
+    model_rf.fit(X_train,y_train)
+    y_pred=model_rf.predict(X_test)
+    end=datetime.now()
+    time_taken=end-start
+    print('Time: ', time_taken)
+
+    print(confusion_matrix(y_test,y_pred))
+    print(classification_report(y_test,y_pred))
+    print(accuracy_score(y_test,y_pred))
+except ValueError as e:
+    print(e)
 
 
 
+
+# K means
+from sklearn.cluster import KMeans
+
+# print("KMeans")
+try:
+    start = datetime.now()
+    model = KMeans(n_clusters=3, random_state=2019)
+    model.fit(dataframe)
+    labels = model.predict(dataframe)
+    print(labels)
+
+    clusterID=pd.DataFrame({'ClustID':labels},index=dataframe.index)
+    clusteredData=pd.concat([dataframe,clusterID],axis='columns')
+
+    print(model.inertia_)
+    end = datetime.now()
+    time_taken = end - start
+    print('Time: ', time_taken)
+
+    # clustNos=[2,3,4,5,6,7,8,9,10]
+    # Inertia=[]
+    # for i in clustNos:
+    #     model=KMeans(n_clusters=i,random_state=2019)
+    #     model.fit(dataframe)
+    #     Inertia.append(model.inertia_)
+
+    # import  matplotlib.pyplot as plt
+    # plt.plot(clustNos,Inertia,'-o')
+    # plt.title('Plot')
+    # plt.xlabel('Number of clusters, K')
+    # plt.ylabel('Inertia')
+    # plt.xticks(clustNos)
+    # plt.show()
+except ValueError as e:
+    print(e)
 
 # from sklearn.metrics import roc_curve, roc_auc_score
 #
