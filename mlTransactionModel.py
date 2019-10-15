@@ -15,7 +15,7 @@ data_csv_path = "Sample Transactions with Target Variable.csv"
 features = ["PROCESSING_CODE", "POS_DATA", "TRANSACTION_AMOUNT", "POS_ENTRY_MODE", "CARD_ACCEPTOR_ACTIVITY",
             "CODE_ACTION", "TARGET"]
 features.sort()
-print(features)
+# print(features)
 length = len(features)
 abc = pathlib.Path(data_csv_path)
 read_csv_variable = pd.read_csv
@@ -120,24 +120,24 @@ convert_dict = {'TERM_CARD_READ_CAP': 'category',
                 }
 
 dataframe = dataframe.astype(convert_dict)
-print(dataframe['POS_ENTRY_MODE'])
-print(dataframe['PROCESSING_CODE'])
-print(dataframe['TRANSACTION_AMOUNT'])
-print(dataframe['CARD_ACCEPTOR_ACTIVITY'])
-print(dataframe['CODE_ACTION'])
-print(dataframe['TARGET'])
-print(dataframe['TERM_CARD_READ_CAP'])
-print(dataframe['TERM_CH_VERI_CAP'])
-print(dataframe['TERM_CARD_CAPTURE_CAP'])
-print(dataframe['TERM_ATTEND_CAP'])
-print(dataframe['CH_PRESENCE_IND'])
-print(dataframe['CARD_PRESENCE_IND'])
-print(dataframe['TXN_CARD_READ_IND'])
-print(dataframe['TXN_CH_VERI_IND'])
-print(dataframe['TXN_CARD_VERI_IND'])
-print(dataframe['TRACK_REWRITE_CAP'])
-print(dataframe['TERM_OUTPUT_IND'])
-print(dataframe['PIN_ENTRY_IND'])
+# print(dataframe['POS_ENTRY_MODE'])
+# print(dataframe['PROCESSING_CODE'])
+# print(dataframe['TRANSACTION_AMOUNT'])
+# print(dataframe['CARD_ACCEPTOR_ACTIVITY'])
+# print(dataframe['CODE_ACTION'])
+# print(dataframe['TARGET'])
+# print(dataframe['TERM_CARD_READ_CAP'])
+# print(dataframe['TERM_CH_VERI_CAP'])
+# print(dataframe['TERM_CARD_CAPTURE_CAP'])
+# print(dataframe['TERM_ATTEND_CAP'])
+# print(dataframe['CH_PRESENCE_IND'])
+# print(dataframe['CARD_PRESENCE_IND'])
+# print(dataframe['TXN_CARD_READ_IND'])
+# print(dataframe['TXN_CH_VERI_IND'])
+# print(dataframe['TXN_CARD_VERI_IND'])
+# print(dataframe['TRACK_REWRITE_CAP'])
+# print(dataframe['TERM_OUTPUT_IND'])
+# print(dataframe['PIN_ENTRY_IND'])
 
 # deleting the POS_DATA column after splitting
 dataframe.drop(columns=['POS_DATA'], inplace=True)
@@ -148,10 +148,10 @@ dataframe.drop(columns=['POS_DATA'], inplace=True)
 # print(new[0])
 # print(new)
 print(dataframe.iloc[20])
-print(dataframe.dtypes)
+# print(dataframe.dtypes)
 # = dataframe[feature[index]]
 # print(a)
-print(dataframe['TERM_CARD_READ_CAP'].describe())
+# print(dataframe['TERM_CARD_READ_CAP'].describe())
 # removing indexes
 # dataframe.reset_index()
 
@@ -161,8 +161,8 @@ print(dataframe['TERM_CARD_READ_CAP'].describe())
 # selecting X and y for the training data, X is the inputs and y is the response variable
 X = dataframe.iloc[:, [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
 y = dataframe.iloc[:, 4]
-print(X)
-print(y)
+# print(X)
+# print(y)
 
 # importing required packages for train test split, confusion matrix,accuracy score and for KNN
 from sklearn.model_selection import train_test_split
@@ -310,6 +310,26 @@ try:
 except ValueError as e:
     print(e)
 
+
+print('Neural network')
+try:
+    from sklearn.neural_network import MLPClassifier
+
+    start = datetime.now()
+
+    mlp=MLPClassifier(hidden_layer_sizes=(3,3,2),activation='relu',random_state=2019)
+    mlp.fit(X_train,y_train)
+    y_pred=mlp.predict(X_test)
+
+    end = datetime.now()
+    time_taken = end - start
+    print('Time: ', time_taken)
+
+    print(confusion_matrix(y_test,y_pred))
+    print(classification_report(y_test,y_pred))
+    print(accuracy_score(y_test,y_pred))
+except ValueError as e:
+    print(e)
 # from sklearn.metrics import roc_curve, roc_auc_score
 #
 # y_pred_proba = knn.predict_proba(X_test)[:, 3]
