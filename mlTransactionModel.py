@@ -191,6 +191,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 try:
     warnings.filterwarnings("ignore")
     from datetime import datetime
+
     print('knn')
     start = datetime.now()
     knn = KNeighborsClassifier(n_neighbors=3)
@@ -200,8 +201,8 @@ try:
     end = datetime.now()
     time_taken = end - start
     print('Time: ', time_taken)
-    #from sklearn.externals import joblib
-    #joblib.dump(knn,'knnModel.pkl')
+    # from sklearn.externals import joblib
+    # joblib.dump(knn,'knnModel.pkl')
     # print confusion matrix and classification report
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
@@ -215,9 +216,9 @@ except ValueError as e:
 try:
     print('Decision Tree')
     start = datetime.now()
-    clf=DecisionTreeClassifier(max_depth=5,random_state=2019,min_samples_split=10,min_samples_leaf=5)
-    clf.fit(X_train,y_train)
-    y_pred=clf.predict(X_test)
+    clf = DecisionTreeClassifier(max_depth=5, random_state=2019, min_samples_split=10, min_samples_leaf=5)
+    clf.fit(X_train, y_train)
+    y_pred = clf.predict(X_test)
     end = datetime.now()
     time_taken = end - start
     print('Time: ', time_taken)
@@ -233,6 +234,7 @@ try:
     from IPython.display import Image
     from sklearn.tree import export_graphviz
     import pydotplus
+
     dot_data = StringIO()
     export_graphviz(clf, out_file=dot_data,
                     filled=True, rounded=True,
@@ -243,36 +245,33 @@ try:
     from sklearn.externals.six import StringIO
     import pydot
     from sklearn import tree
+
     dot_data = StringIO()
     tree.export_graphviz(clf, out_file=dot_data)
     graph = pydot.graph_from_dot_data(dot_data.getvalue())
     graph[0].write_pdf("iris.pdf")
 
-
-    print(confusion_matrix(y_test,y_pred))
-    print(classification_report(y_test,y_pred))
-    print(accuracy_score(y_test,y_pred))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+    print(accuracy_score(y_test, y_pred))
 except ValueError as e:
     print(e)
 
 try:
     print('Random Forest')
-    start=datetime.now()
-    model_rf=RandomForestClassifier(random_state=2019,n_estimators=500,oob_score=True)
-    model_rf.fit(X_train,y_train)
-    y_pred=model_rf.predict(X_test)
-    end=datetime.now()
-    time_taken=end-start
+    start = datetime.now()
+    model_rf = RandomForestClassifier(random_state=2019, n_estimators=500, oob_score=True)
+    model_rf.fit(X_train, y_train)
+    y_pred = model_rf.predict(X_test)
+    end = datetime.now()
+    time_taken = end - start
     print('Time: ', time_taken)
 
-    print(confusion_matrix(y_test,y_pred))
-    print(classification_report(y_test,y_pred))
-    print(accuracy_score(y_test,y_pred))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+    print(accuracy_score(y_test, y_pred))
 except ValueError as e:
     print(e)
-
-
-
 
 # K means
 from sklearn.cluster import KMeans
@@ -285,8 +284,8 @@ try:
     labels = model.predict(dataframe)
     print(labels)
 
-    clusterID=pd.DataFrame({'ClustID':labels},index=dataframe.index)
-    clusteredData=pd.concat([dataframe,clusterID],axis='columns')
+    clusterID = pd.DataFrame({'ClustID': labels}, index=dataframe.index)
+    clusteredData = pd.concat([dataframe, clusterID], axis='columns')
 
     print(model.inertia_)
     end = datetime.now()
@@ -310,24 +309,26 @@ try:
 except ValueError as e:
     print(e)
 
-
 print('Neural network')
 try:
     from sklearn.neural_network import MLPClassifier
 
     start = datetime.now()
 
-    mlp=MLPClassifier(hidden_layer_sizes=(3,3,2),activation='relu',random_state=2019)
-    mlp.fit(X_train,y_train)
-    y_pred=mlp.predict(X_test)
+    mlp = MLPClassifier(hidden_layer_sizes=(3, 3, 2), activation='relu', random_state=2019)
+    mlp.fit(X_train, y_train)
+    y_pred = mlp.predict(X_test)
 
     end = datetime.now()
     time_taken = end - start
     print('Time: ', time_taken)
+    # from sklearn.externals import joblib
+    #
+    # joblib.dump(mlp, 'neuralNetModel.pkl')
 
-    print(confusion_matrix(y_test,y_pred))
-    print(classification_report(y_test,y_pred))
-    print(accuracy_score(y_test,y_pred))
+    print(confusion_matrix(y_test, y_pred))
+    print(classification_report(y_test, y_pred))
+    print(accuracy_score(y_test, y_pred))
 except ValueError as e:
     print(e)
 # from sklearn.metrics import roc_curve, roc_auc_score

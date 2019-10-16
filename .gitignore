@@ -7,3 +7,7 @@ Sample Transactions-test Data.csv
 Sample Transactions with Target Variable.csv
 task.csv
 .~lock.task.csv#
+producer-copy.py
+consumer-copy.py
+knnModel.pkl
+neuralNetModel.pkl
