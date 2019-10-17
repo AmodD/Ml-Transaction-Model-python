@@ -159,8 +159,8 @@ print(dataframe.iloc[20])
 # dataframe.drop(columns=['POS_DATA'], inplace=True)
 
 # selecting X and y for the training data, X is the inputs and y is the response variable
-X = dataframe.iloc[:, [0, 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17]]
-y = dataframe.iloc[:, 4]
+X = dataframe.iloc[:, [0, 2, 4, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]]
+y = dataframe.iloc[:, 1]
 # print(X)
 # print(y)
 
@@ -202,8 +202,8 @@ try:
     time_taken = end - start
     print('Time: ', time_taken)
     # from sklearn.externals import joblib
-    # joblib.dump(knn,'knnModel.pkl')
-    # print confusion matrix and classification report
+    # joblib.dump(knn,'knnModel.model')
+    # # print confusion matrix and classification report
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
 
@@ -257,21 +257,21 @@ try:
 except ValueError as e:
     print(e)
 
-try:
-    print('Random Forest')
-    start = datetime.now()
-    model_rf = RandomForestClassifier(random_state=2019, n_estimators=500, oob_score=True)
-    model_rf.fit(X_train, y_train)
-    y_pred = model_rf.predict(X_test)
-    end = datetime.now()
-    time_taken = end - start
-    print('Time: ', time_taken)
-
-    print(confusion_matrix(y_test, y_pred))
-    print(classification_report(y_test, y_pred))
-    print(accuracy_score(y_test, y_pred))
-except ValueError as e:
-    print(e)
+# try:
+#     print('Random Forest')
+#     start = datetime.now()
+#     model_rf = RandomForestClassifier(random_state=2019, n_estimators=500, oob_score=True)
+#     model_rf.fit(X_train, y_train)
+#     y_pred = model_rf.predict(X_test)
+#     end = datetime.now()
+#     time_taken = end - start
+#     print('Time: ', time_taken)
+#
+#     print(confusion_matrix(y_test, y_pred))
+#     print(classification_report(y_test, y_pred))
+#     print(accuracy_score(y_test, y_pred))
+# except ValueError as e:
+#     print(e)
 
 # K means
 from sklearn.cluster import KMeans
@@ -315,7 +315,7 @@ try:
 
     start = datetime.now()
 
-    mlp = MLPClassifier(hidden_layer_sizes=(3, 3, 2), activation='relu', random_state=2019)
+    mlp = MLPClassifier(hidden_layer_sizes=(3, 3, 2), activation='tanh', random_state=2019)
     mlp.fit(X_train, y_train)
     y_pred = mlp.predict(X_test)
 
@@ -324,7 +324,7 @@ try:
     print('Time: ', time_taken)
     # from sklearn.externals import joblib
     #
-    # joblib.dump(mlp, 'neuralNetModel.pkl')
+    # joblib.dump(mlp, 'neuralNetModel.model')
 
     print(confusion_matrix(y_test, y_pred))
     print(classification_report(y_test, y_pred))
